@@ -1,9 +1,15 @@
-const todoInput =document.getElementById("inputTask")
+document.addEventListener("DOMContentLoaded",()=>{
+    const todoInput =document.getElementById("inputTask")
 const addtaskbtn =document.getElementById("AddTaskBtn")
 const tasklist = document.getElementById("to-do_list")
-let task =[]
+
+let tasks =JSON.parse(localStorage.getItem("tasks"))||[]
+
+tasks.forEach(task=>renderTask(task))
+
 addtaskbtn.addEventListener("click" ,function(){
     let taskText =todoInput.value.trim()
+
 if (taskText===""){
     return
 }
@@ -13,8 +19,23 @@ const newTask ={
     text : taskText,
     completed: false
 }
-task.push(newTask)
+tasks.push(newTask)
+renderTask(newTask)
+saveTask()
 todoInput.value = ""
-console.log(task)
+console.log(tasks)
 
+
+
+
+})
+
+function renderTask(task){
+    console.log(task)
+}
+
+
+function saveTask(){
+    localStorage.setItem("tasks",JSON.stringify(tasks))
+}
 })
