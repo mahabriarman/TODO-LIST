@@ -1,41 +1,68 @@
-document.addEventListener("DOMContentLoaded",()=>{
-    const todoInput =document.getElementById("inputTask")
-const addtaskbtn =document.getElementById("AddTaskBtn")
-const tasklist = document.getElementById("to-do_list")
+document.addEventListener("DOMContentLoaded", () => {
 
-let tasks =JSON.parse(localStorage.getItem("tasks"))||[]
+    const todoInput = document.getElementById("inputTask")
+    const addtaskbtn = document.getElementById("AddTaskBtn")
+    const tasklist = document.getElementById("to-do_list")
 
-tasks.forEach(task=>renderTask(task))
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || []
 
-addtaskbtn.addEventListener("click" ,function(){
-    let taskText =todoInput.value.trim()
+    tasks.forEach(task => renderTask(task))
 
-if (taskText===""){
-    return
-}
+    addtaskbtn.addEventListener("click", function () {
 
-const newTask ={
-    id : Date.now(),
-    text : taskText,
-    completed: false
-}
-tasks.push(newTask)
-renderTask(newTask)
-saveTask()
-todoInput.value = ""
-console.log(tasks)
+        let taskText = todoInput.value.trim()
 
+        if (taskText === "") return
 
+        const newTask = {
+            id: Date.now(),
+            text: taskText,
+            completed: false
+        }
 
+        tasks.push(newTask)
+        renderTask(newTask)
+        saveTask()
+        todoInput.value = ""
 
-})
+    })
 
-function renderTask(task){
-    console.log(task)
-}
+    function renderTask(task) {
 
+        const li = document.createElement("li")
+        li.setAttribute("data-id", task.id)
 
-function saveTask(){
-    localStorage.setItem("tasks",JSON.stringify(tasks))
-}
+        if (task.completed) li.classList.add("completed")
+
+        li.innerHTML = `
+            <span>${task.text}</span>
+            <button>delete</button>
+        `
+
+        // toggle complete
+        li.addEventListener("click", (e) => {
+            if (e.target.tagName === "BUTTON") return
+
+            task.completed = !task.completed
+            li.classList.toggle("completed")
+            saveTask()
+        })
+
+        // delete task
+        li.querySelector("button").addEventListener("click", (e) => {
+            e.stopPropagation()
+
+            tasks = tasks.filter((t) => t.id !== task.id)
+
+            li.remove()
+            saveTask()
+        })
+
+        tasklist.appendChild(li) 
+    }
+
+    function saveTask() {
+        localStorage.setItem("tasks", JSON.stringify(tasks))
+    }
+
 })
